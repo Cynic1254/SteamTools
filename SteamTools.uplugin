@@ -1,0 +1,43 @@
+﻿{
+	"FileVersion": 3,
+	"Version": 1,
+	"VersionName": "1.0",
+	"FriendlyName": "SteamTools",
+	"Description": "Collection of tools that interact with steam",
+	"Category": "Other",
+	"CreatedBy": "Cynic",
+	"CreatedByURL": "cynic1254.com",
+	"DocsURL": "",
+	"MarketplaceURL": "",
+	"CanContainContent": true,
+	"IsBetaVersion": true,
+	"IsExperimentalVersion": false,
+	"Installed": false,
+	"Plugins": [
+		{
+			"Name": "SteamShared",
+			"Enabled": true,
+			"PlatformAllowList": [
+				"Win64",
+				"Mac",
+				"Linux"
+			]
+		},
+		{
+			"Name": "EnhancedInput",
+			"Enabled": true
+		}
+	],
+	"Modules": [
+		{
+			"Name": "SteamToolsCore",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		},
+		{
+			"Name": "SteamToolsInput",
+			"Type": "Runtime",
+			"LoadingPhase": "Default"
+		}
+	]
+}
