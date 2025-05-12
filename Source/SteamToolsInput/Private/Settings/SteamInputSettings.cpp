@@ -3,6 +3,8 @@
 
 #include "Settings/SteamInputSettings.h"
 
+#include "SteamToolsInput.h"
+#include "Controller/FSteamInputController.h"
 #include "Framework/Application/NavigationConfig.h"
 
 USteamInputSettings::USteamInputSettings()
@@ -13,11 +15,13 @@ USteamInputSettings::USteamInputSettings()
 		KeyActionRules = Config->KeyActionRules;
 		KeyEventRules = Config->KeyEventRules;
 	}
+
+	ReloadCache();
 }
 
 void USteamInputSettings::RegenerateKeys()
 {
-	const USteamInputSettings* Settings = GetDefault<USteamInputSettings>();
+	USteamInputSettings* Settings = GetMutableDefault<USteamInputSettings>();
 	
 	EKeys::RemoveKeysWithCategory(Settings->MenuCategory);
 
@@ -25,6 +29,8 @@ void USteamInputSettings::RegenerateKeys()
 	{
 		Settings->GenerateKey(Key.Key, Key.Value);
 	}
+
+	Settings->ReloadCache();
 }
 
 FName USteamInputSettings::GetXAxisName(const FName Name)
@@ -124,4 +130,31 @@ void USteamInputSettings::PostEditChangeProperty(struct FPropertyChangedEvent& P
 	RegenerateKeys();
 	ApplySlateConfig();
 }
+
+	
 #endif
+
+void USteamInputSettings::ReloadCache()
+{
+	Handles.Empty();
+
+	if (!FSteamToolsInputModule::Get().SteamInputInitialized)
+	{
+		return;
+	}
+
+	for (const auto [KeyName, Type] : Keys)
+	{
+		switch (Type)
+		{
+		case EKeyType::Button:
+			Handles.Add(KeyName, {SteamInput()->GetDigitalActionHandle(TCHAR_TO_UTF8(*KeyName.ToString())), ActionType::EDigital});
+			break;
+		case EKeyType::Analog:
+		case EKeyType::Joystick:
+		case EKeyType::MouseInput:
+		default:
+			Handles.Add(KeyName, {SteamInput()->GetAnalogActionHandle(TCHAR_TO_UTF8(*KeyName.ToString())), ActionType::EAnalog});
+		}
+	}
+}

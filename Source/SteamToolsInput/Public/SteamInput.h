@@ -4,42 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
+#include "SteamTypes.h"
 #include "SteamInput.generated.h"
-
-typedef uint64 InputHandle_t;
-typedef uint64 InputActionSetHandle_t;
-
-/// @brief Wrapper to allow the use of InputHandle_t inside unreal, for c++ this gets freely converted
-USTRUCT(BlueprintType)
-struct FInputHandle
-{
-	GENERATED_BODY()
-
-	FInputHandle() = default;
-	FInputHandle(const InputHandle_t Handle) : BP_Num(Handle), ControllerID(Handle) {}
-	
-	operator InputHandle_t() const {return ControllerID;}
-
-	UPROPERTY(BlueprintReadOnly)
-	int BP_Num;
-	InputHandle_t ControllerID = 0;
-};
-
-/// @brief Wrapper to allow the use of InputActionSetHandle_t inside unreal, for c++ this gets freely converted
-USTRUCT(BlueprintType)
-struct FInputActionSetHandle
-{
-	GENERATED_BODY()
-
-	FInputActionSetHandle() = default;
-	FInputActionSetHandle(const InputActionSetHandle_t Handle) : BP_Num(Handle), ActionSetHandle(Handle) {}
-
-	operator InputActionSetHandle_t() const {return ActionSetHandle;}
-
-	UPROPERTY(BlueprintReadOnly)
-	int BP_Num;
-	InputActionSetHandle_t ActionSetHandle = 0;
-};
 
 /**
  * Steam API function wrappers
@@ -66,4 +32,28 @@ public:
 	/// @return Handle to the action set or -1 if steam isn't initialized and 0 if the handle isn't found
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static FInputActionSetHandle GetActionSetHandle(FName ActionSetName);
+
+	/// @brief Test if the provided controller is currently being used by steam as a steam controller.
+	/// @param ControllerID Id of the controller to check
+	/// @return True if steam is currently using this controller as a steam controller, false otherwise
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static bool IsSteamController(int32 ControllerID);
+
+	/// @brief Invokes the Steam overlay and brings up the binding screen.
+	/// @param ControllerID Id of the controller to open the panel for
+	/// @return true for success; false if overlay is disabled/unavailable. If the player is using Big Picture Mode the configuration will open in the overlay. In desktop mode a popup window version of Big Picture will be created and open the configuration.
+	UFUNCTION(BlueprintCallable)
+	static bool ShowBindingPanel(int32 ControllerID);
+
+	/// @brief Get the action handle from the action name
+	/// @param ActionName Name of the action handle to get
+	/// @return Action handle
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static FControllerActionHandle GetActionHandle(FName ActionName);
+
+	/// @brief Get the type of action that the action handle is (Analog or Digital)
+	/// @param Handle Action Handle to get the action type from
+	/// @return Digital or Analog
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static ActionType GetActionHandleType(FControllerActionHandle Handle);
 };

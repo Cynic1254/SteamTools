@@ -1,8 +1,10 @@
 ﻿#pragma once
 #include "IInputDevice.h"
 #include "SteamToolsInput.h"
+#include "SteamTypes.h"
 #include "steam/isteamcontroller.h"
 
+enum class ActionType : uint8;
 enum class EKeyType : uint8;
 struct FSteamKey;
 
@@ -30,6 +32,8 @@ public:
 	void SetVibration(int32 ControllerID, const FForceFeedbackValues& Values);
 
 	static void ActivateActionSet(int32 ControllerID, const InputActionSetHandle_t ActionSetHandle);
+
+	ActionType GetActionHandleType(ControllerActionHandle_t ActionHandle) const;
 private:
 	bool bControllerInitialized = false;
 	TSharedRef<FGenericApplicationMessageHandler> MessageHandler;

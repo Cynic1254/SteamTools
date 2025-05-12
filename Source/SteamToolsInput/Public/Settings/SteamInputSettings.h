@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
+#include "SteamTypes.h"
 #include "SteamInputSettings.generated.h"
 
 /// @brief The different input types steam supports, technically unreal also supports a 3D vector but steam doesn't so we don't give the option
@@ -56,9 +57,16 @@ public:
 	UPROPERTY(Config, EditAnywhere, Category = "Slate Input")
 	TMap<FKey, EUINavigationAction> KeyActionRules;
 
+	UPROPERTY(Config, EditAnywhere, Category = "Glyphs")
+	ESteamGlyphSize DefaultGlyphSize = ESteamGlyphSize::ELarge;
+	
+	UPROPERTY(Config, EditAnywhere, Category = "Glyphs")
+	TMap<ESteamInputActionOrigin, TSoftObjectPtr<UTexture2D>> TextureOverwrites;
+	
 	/// @brief Update the slate key binds
 	static void ApplySlateConfig();
 	
+	TMap<FName, FControllerActionHandle> Handles;
 private:
 	virtual void PostInitProperties() override;
 	void GenerateKey(FName ActionName, EKeyType KeyType) const;
@@ -69,4 +77,6 @@ private:
 	virtual void PreEditChange(FProperty* PropertyAboutToChange) override;
 	virtual void PostEditChangeProperty(struct FPropertyChangedEvent& PropertyChangedEvent) override;
 #endif
+
+	void ReloadCache();
 };

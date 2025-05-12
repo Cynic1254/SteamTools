@@ -193,3 +193,8 @@ void FSteamInputController::ActivateActionSet(const int32 ControllerID, const In
 		ActiveActionSet[ControllerID] = ActionSetHandle;
 	}
 }
+
+ActionType FSteamInputController::GetActionHandleType(const ControllerActionHandle_t ActionHandle) const
+{
+	return AnalogActions.Contains(ActionHandle) ? ActionType::EAnalog : ActionType::EDigital;
+}

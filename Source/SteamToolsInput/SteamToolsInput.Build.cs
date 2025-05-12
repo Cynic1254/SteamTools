@@ -11,7 +11,9 @@ public class SteamToolsInput : ModuleRules
             {
                 "Core",
                 "InputCore",
-                "EnhancedInput"
+                "SteamToolsCore",
+                "EnhancedInput",
+                "UMG"
             }
         );
 
@@ -23,7 +25,6 @@ public class SteamToolsInput : ModuleRules
                 "Slate",
                 "SlateCore",
                 "SteamShared",
-                "SteamToolsCore",
                 "InputDevice",
                 "ApplicationCore"
             }
