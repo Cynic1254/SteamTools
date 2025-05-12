@@ -5,29 +5,30 @@
 
 #include "ImageUtils.h"
 #include "SteamInput.h"
+#include "Kismet/KismetSystemLibrary.h"
 #include "Settings/SteamInputSettings.h"
 #include "steam/isteaminput.h"
 
-TMap<ESteamInputActionOrigin, TObjectPtr<UTexture2D>> USteamGlyphUtils::GlyphTextureCache{};
-bool USteamGlyphUtils::TexturesCached = false;
-
 const UTexture2D* USteamGlyphUtils::GetGlyphForActionOrigin(ESteamInputActionOrigin ActionOrigin)
 {
+	USteamGlyphUtils* MutableDefault = GetMutableDefault<USteamGlyphUtils>();
 	const USteamInputSettings* Settings = GetDefault<USteamInputSettings>();
-	if (!TexturesCached)
+	
+	if (!MutableDefault->TexturesCached)
 	{
 		for (const auto [InputAction, Texture] : Settings->TextureOverwrites)
 		{
-			GlyphTextureCache.Add(InputAction, Texture.Get());
+			MutableDefault->GlyphTextureCache.Add(InputAction, Texture.Get());
 		}
+		MutableDefault->TexturesCached = true;
 	}
 
-	if (GlyphTextureCache.Contains(ActionOrigin))
+	if (MutableDefault->GlyphTextureCache.Contains(ActionOrigin) && UKismetSystemLibrary::IsValid(*(MutableDefault->GlyphTextureCache.Find(ActionOrigin))))
 	{
-		return *GlyphTextureCache.Find(ActionOrigin);
+		return *(MutableDefault->GlyphTextureCache.Find(ActionOrigin));
 	}
 
-	return GlyphTextureCache.Add(ActionOrigin, FImageUtils::ImportFileAsTexture2D(SteamInput()->GetGlyphPNGForActionOrigin(static_cast<EInputActionOrigin>(ActionOrigin), static_cast<ESteamInputGlyphSize>(Settings->DefaultGlyphSize), 0)));
+	return MutableDefault->GlyphTextureCache.Add(ActionOrigin, FImageUtils::ImportFileAsTexture2D(SteamInput()->GetGlyphPNGForActionOrigin(static_cast<EInputActionOrigin>(ActionOrigin), static_cast<ESteamInputGlyphSize>(Settings->DefaultGlyphSize), 0)));
 }
 
 TArray<ESteamInputActionOrigin> USteamGlyphUtils::GetActionOrigins(FInputHandle ControllerID,
@@ -44,8 +45,9 @@ TArray<ESteamInputActionOrigin> USteamGlyphUtils::GetActionOrigins(FInputHandle 
 		Amount = SteamInput()->GetDigitalActionOrigins(ControllerID, ActionSet, ActionBinding.GetDigitalActionHandle(), Out);
 		break;
 	case ActionType::EAnalog:
-	default:
 		Amount = SteamInput()->GetAnalogActionOrigins(ControllerID, ActionSet, ActionBinding.GetAnalogActionHandle(), Out);
+	case ActionType::EUnknown:
+	default:
 		break;
 	}
 

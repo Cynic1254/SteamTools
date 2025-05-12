@@ -67,6 +67,9 @@ public:
 	static void ApplySlateConfig();
 	
 	TMap<FName, FControllerActionHandle> Handles;
+	
+	UFUNCTION()
+	static TArray<FName> GetFSteamKeysOptions();
 private:
 	virtual void PostInitProperties() override;
 	void GenerateKey(FName ActionName, EKeyType KeyType) const;
@@ -79,4 +82,18 @@ private:
 #endif
 
 	void ReloadCache();
+
+};
+
+USTRUCT(BlueprintType)
+struct FSteamKey
+{
+	GENERATED_BODY()
+	
+	UPROPERTY(EditAnywhere, Category = "Steam", meta = (GetOptions="SteamToolsInput.SteamInputSettings.GetFSteamKeysOptions"))
+	FName Key = "default";
+
+	FSteamKey() = default;
+	FSteamKey(const FName Key) : Key(Key) {}
+	operator FName() const {return Key;}
 };

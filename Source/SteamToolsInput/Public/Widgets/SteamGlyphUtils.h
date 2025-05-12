@@ -35,6 +35,8 @@ public:
 	static TArray<FSteamInputActionOrigin> GetActionOriginsBPCompat(FInputHandle ControllerID, FInputActionSetHandle ActionSet,
 															FControllerActionHandle ActionBinding);
 private:
-	static bool TexturesCached;
-	static TMap<ESteamInputActionOrigin, TObjectPtr<UTexture2D>> GlyphTextureCache;
+	UPROPERTY()
+	bool TexturesCached = false;
+	UPROPERTY()
+	TMap<ESteamInputActionOrigin, TObjectPtr<UTexture2D>> GlyphTextureCache;
 };

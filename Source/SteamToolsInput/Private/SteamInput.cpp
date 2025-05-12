@@ -59,6 +59,11 @@ FControllerActionHandle USteamInput::GetActionHandle(FName ActionName)
 	return Handle ? *Handle : 0;
 }
 
+FControllerActionHandle USteamInput::GetActionHandleSteamKey(const FSteamKey ActionKey)
+{
+	return GetActionHandle(ActionKey);
+}
+
 ActionType USteamInput::GetActionHandleType(FControllerActionHandle Handle)
 {
 	if (Handle.GetType() != ActionType::EUnknown)
@@ -66,10 +71,7 @@ ActionType USteamInput::GetActionHandleType(FControllerActionHandle Handle)
 		return Handle.GetType();
 	}
 
-	if (FSteamToolsInputModule::Get().SteamInputInitialized)
-	{
-		return FSteamToolsInputModule::Get().GetInputDevice()->GetActionHandleType(Handle.GetHandle());
-	}
+	RETURN_IF_STEAM_INACTIVE(ActionType::EUnknown)
 	
-	return ActionType::EUnknown;
+	return FSteamToolsInputModule::Get().GetInputDevice()->GetActionHandleType(Handle.GetHandle());
 }

@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "SteamTypes.h"
+#include "Settings/SteamInputSettings.h"
 #include "SteamInput.generated.h"
 
 /**
@@ -50,6 +51,8 @@ public:
 	/// @return Action handle
 	UFUNCTION(BlueprintCallable, BlueprintPure)
 	static FControllerActionHandle GetActionHandle(FName ActionName);
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	static FControllerActionHandle GetActionHandleSteamKey(FSteamKey ActionKey);
 
 	/// @brief Get the type of action that the action handle is (Analog or Digital)
 	/// @param Handle Action Handle to get the action type from

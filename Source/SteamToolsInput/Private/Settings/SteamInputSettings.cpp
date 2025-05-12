@@ -158,3 +158,11 @@ void USteamInputSettings::ReloadCache()
 		}
 	}
 }
+
+TArray<FName> USteamInputSettings::GetFSteamKeysOptions()
+{
+	UE_LOG(LogTemp, Warning, TEXT("CALLED GetFSteamKeysOptions"));
+	TArray<FName> Keys;
+	GetDefault<USteamInputSettings>()->Keys.GetKeys(Keys);
+	return Keys;
+}
