@@ -79,6 +79,11 @@ void FSteamInputController::SendControllerEvents()
 		
 		for (const auto DigitalAction : DigitalActions)
 		{
+			if (UserId == PLATFORMUSERID_NONE || DeviceId == INPUTDEVICEID_NONE)
+			{
+				continue;
+			}
+			
 			const InputDigitalActionData_t ActionData = SteamInput()->GetDigitalActionData(Controller, DigitalAction.Key);
 			
 			if (State.DigitalStatusMap.FindOrAdd(DigitalAction.Value) == false && ActionData.bState)

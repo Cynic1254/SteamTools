@@ -16,7 +16,7 @@ const UTexture2D* USteamGlyphUtils::GetGlyphForActionOrigin(ESteamInputActionOri
 	
 	if (!MutableDefault->TexturesCached)
 	{
-		for (const auto [InputAction, Texture] : Settings->TextureOverwrites)
+		for (const auto& [InputAction, Texture] : Settings->TextureOverwrites)
 		{
 			MutableDefault->GlyphTextureCache.Add(InputAction, Texture.Get());
 		}
